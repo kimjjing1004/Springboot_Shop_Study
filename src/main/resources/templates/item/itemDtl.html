@@ -30,6 +30,7 @@
         function order() {
             let token = $("meta[name='_csrf']").attr("content");
             let header = $("meta[name='_csrf_header']").attr("content");
+
             let url = "/order";
             let paramData = {
                 itemId : $("#itemId").val(),
@@ -69,6 +70,7 @@
         function addCart() {
             let token = $("meta[name='_csrf']").attr("content");
             let header = $("meta[name='_csrf_header']").attr("content");
+
             let url = "/cart";
             let paramData = {
                 itemId : $("#itemId").val(),
