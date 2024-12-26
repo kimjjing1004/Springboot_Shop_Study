@@ -18,7 +18,11 @@
         </thead>
         <tbody>
             <tr th:each="itemDto, status: ${itemDtoList}">
+                <!-- status 에는 현재 반복에 대한 정보가 존재합니다. -->
+                <!-- 인덱스가 짝수일 경우 status.even 은 true 가 됩니다. -->
+                <!-- 즉, 현재 인덱스가 짝수라면 순번에 "짝수"를 출력해줍니다. -->
                 <td th:if="${status.even}" th:text="짝수"></td>
+                <!-- 현재 인덱스가 짝수가 아닐 경우 즉, 홀수일 경우 순번에 "홀수"를 출력해줍니다. -->
                 <td th:unless="${status.even}" th:text="홀수"></td>
                 <td th:text="${itemDto.itemNm}"></td>
                 <td th:text="${itemDto.itemDetail}"></td>

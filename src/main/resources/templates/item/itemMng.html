@@ -6,26 +6,30 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-
         $(document).ready(function(){
             $("#searchBtn").on("click",function(e) {
+
+                // <검색> 버튼 클릭 시 form 태그의 전송을 막아줍니다.
                 e.preventDefault();
+
+                // <검색> 버튼을 클릭할 페이지 번호로 0번째 페이지를 조회하는 page 함수를 호출합니다.
                 page(0);
             });
         });
 
-        function page(page){
+        // page 함수는 이동할 페이지 값을 받아서 현재 조회조건으로 설정된
+        // 상품 등록 기간, 판매 상태, 조회 유형, 검색어를 파라미터로 설정 후 상품 데이터를 조회합니다.
+        function page(page) {
             let searchDateType = $("#searchDateType").val();
             let searchSellStatus = $("#searchSellStatus").val();
             let searchBy = $("#searchBy").val();
             let searchQuery = $("#searchQuery").val();
 
-            location.href="/admin/items/" + page + "?searchDateType=" + searchDateType
+            location.href = "/admin/items/" + page + "?searchDateType=" + searchDateType
                 + "&searchSellStatus=" + searchSellStatus
                 + "&searchBy=" + searchBy
                 + "&searchQuery=" + searchQuery;
         }
-
     </script>
 </th:block>
 
@@ -52,11 +56,14 @@
             </tr>
             </thead>
             <tbody>
+            <!-- items.getContent() 메소드를 호출하면 조회한 상품 데이터의 리스트를 얻을 수 있습니다. -->
+            <!-- 해당 리스트를 th:each 를 통해서 반복적으로 테이블의 row 를 그려줍니다. -->
             <tr th:each="item, status: ${items.getContent()}">
                 <td th:text="${item.id}"></td>
                 <td>
                     <a th:href="'/admin/item/' + ${item.id}" th:text="${item.itemNm}"></a>
                 </td>
+                <!-- 현재 상품의 판매 상태가 "SELL" 이면 "판매중" 으로, 같지 않으면 "품절" 로 보여줍니다. -->
                 <td th:text="${item.itemSellStatus == T(com.shop.constant.ItemSellStatus).SELL} ? '판매중' : '품절'"></td>
                 <td th:text="${item.createdBy}"></td>
                 <td th:text="${item.regTime}"></td>
@@ -64,20 +71,32 @@
             </tbody>
         </table>
 
+        <!-- th:with 는 변수값을 정의할 때 사용합니다. -->
+        <!-- 페이지 시작 번호(start)와 페이지 끝 페이지 번호(end)를 구해서 저장합니다. -->
+        <!-- 시작 페이지와 끝과 페이지 번호를 구하는 방법이 조금 복잡해 보이는데 정리하면 다음과 같습니다. -->
+        <!-- start = (현재 페이지 번호 / 보여줄 페이지 수) + 1 -->
+        <!-- end = start + (보여줄 페이지 수 - 1) -->
         <div th:with="start=${(items.number/maxPage) * maxPage + 1}, end=(${(items.totalPages == 0) ? 1 : (start + (maxPage - 1) < items.totalPages ? start + (maxPage - 1) : items.totalPages)})" >
             <ul class="pagination justify-content-center">
 
+                <!-- 첫 번쨰 페이지면 이전 페이지로 이동하는 <Previous> 버튼을 선택 불가능하도록 disabled 클래스를 추가합니다. -->
                 <li class="page-item" th:classappend="${items.first} ? 'disabled'">
+
+                    <!-- <Previous> 버튼 클릭 시 현재 페이지에서 이전 페이지로 이동하도록 page 함수를 호출합니다. -->
                     <a th:onclick="'javascript:page(' + ${items.number - 1} + ')'" aria-label='Previous' class="page-link">
                         <span aria-hidden='true'>Previous</span>
                     </a>
                 </li>
 
+                <!-- 현재 페이지이면 active 클래스를 추가합니다. -->
                 <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${items.number eq page - 1} ? 'active' : ''">
+                    <!-- 페이지 번호 클릭 시 해당 페이지로 이동하도록 page 함수를 호출합니다. -->
                     <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
                 </li>
 
+                <!-- 마지막 페이지일 경우 다음 페이지로 이동하는 <Next> 버튼을 선택 불가능하도록 disabled 클래스를 추가합니다. -->
                 <li class="page-item" th:classappend="${items.last} ? 'disabled'">
+                    <!-- <Next> 버튼 클릭 시 현재 페이지에서 다음 페이지로 이동하도록 page 함수를 호출합니다. -->
                     <a th:onclick="'javascript:page(' + ${items.number + 1} + ')'" aria-label='Next' class="page-link">
                         <span aria-hidden='true'>Next</span>
                     </a>

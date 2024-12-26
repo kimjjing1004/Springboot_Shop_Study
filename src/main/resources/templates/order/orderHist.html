@@ -17,6 +17,8 @@
             let header = $("meta[name='_csrf_header']").attr("content");
 
             let url = "/order/" + orderId + "/cancel";
+
+            // 취소할 주문 번호를 파라미터로 넘겨줍니다.
             let paramData = {
                 orderId : orderId,
             };
@@ -34,12 +36,14 @@
                 },
                 dataType : "json",
                 cache    : false,
+
+                // 주문이 정상적으로 취소됐으면 현재 페이지로 다시 redirect 합니다.
                 success  : function(result, status) {
                     alert("주문이 취소 되었습니다.");
                     location.href='/orders/' + /*[[${page}]]*/ '';
                 },
                 error : function(jqXHR, status, error) {
-                    if(jqXHR.status === '401'){
+                    if(jqXHR.status === 401){
                         alert('로그인 후 이용해주세요');
                         location.href = '/members/login';
                     } else{

@@ -16,7 +16,8 @@
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         /*<![CDATA[*/
-        $(document).ready(function(){
+        // 회원 가입 시 실패했다면 에러 메시지를 경고창을 이용해서 보여줍니다.
+        $(document).ready(function() {
             let errorMessage = /*[[${errorMessage}]]*/ "";
             if(errorMessage){
                 alert(errorMessage);
@@ -52,6 +53,12 @@
         <div style="text-align: center">
             <button type="submit" class="btn btn-primary" style="">Submit</button>
         </div>
+
+        <!-- 스프링 시큐리티를 사용할 경우 기본적으로 CSRF(Cross Site Request Forgery) 를 방어하기 위해 -->
+        <!-- 모든 POST 방식의 데이터 전송에는 CSRF 토큰 값이 있어야 합니다. -->
+        <!-- CSRF 토큰은 실제 서버에서 허용한 요청이 맞는지 확인하기 위한 토큰입니다. -->
+        <!-- 사용자의 세션에 임의의 값을 저장하여 요청마다 그 값을 포함하여 전송하면 -->
+        <!-- 서버에서 세션에 저장된 값과 요청이 온 값이 일치하는지 확인하여 CSRF 를 방어합니다. -->
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     </form>
 

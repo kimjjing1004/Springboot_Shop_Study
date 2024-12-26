@@ -21,13 +21,18 @@ public class MemberController {
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping(value = "/members/new")
+    // 회원 가입 페이지로 이동할 수 있도록 MemberController 클래스에 메소드를 작성합니다.
     public String memberForm(Model model) {
         model.addAttribute("memberFormDto", new MemberFormDto());
         return "member/memberForm";
     }
 
     @PostMapping(value = "/members/new")
+    // 검증하려는 객체의 앞에 @Valid 어노테이션을 선언하고,
+    // 파라미터로 bindingResult 객체를 추가합니다. 검사 후 결과는 bindingResult 에 담아줍니다.
     public String newMember(@Valid MemberFormDto memberFormDto, BindingResult bindingResult, Model model) {
+
+        // bindingResult.hasErrors() 를 호출하여 에러가 있다면 회원 가입 페이지로 이동합니다.
         if (bindingResult.hasErrors()) {
             return "member/memberForm";
         }
@@ -36,6 +41,7 @@ public class MemberController {
             Member member = Member.createMember(memberFormDto, passwordEncoder);
             memberService.saveMember(member);
         } catch (IllegalStateException e) {
+            // 회원 가입 시 중복 회원 가입 예외가 발생하면 에러 메시지를 뷰로 전달합니다.
             model.addAttribute("errorMessage", e.getMessage());
             return "member/memberForm";
         }
